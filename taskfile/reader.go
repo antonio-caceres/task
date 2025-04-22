@@ -236,6 +236,12 @@ func (r *Reader) include(ctx context.Context, node Node) error {
 	for _, include := range vertex.Taskfile.Includes.All() {
 		vars := env.GetEnviron()
 		vars.Merge(vertex.Taskfile.Vars, nil)
+		// Special variables are not known at this point, so it's a workaround to get them replaced later
+		vars.Set("TASK_EXE", ast.Var{Value: "{{.TASK_EXE}}"})
+		vars.Set("ROOT_TASKFILE", ast.Var{Value: "{{.ROOT_TASKFILE}}"})
+		vars.Set("USER_WORKING_DIR", ast.Var{Value: "{{.USER_WORKING_DIR}}"})
+		vars.Set("TASK_VERSION", ast.Var{Value: "{{.TASK_VERSION}}"})
+		vars.Set("ROOT_DIR", ast.Var{Value: "{{.ROOT_DIR}}"})
 		// Start a goroutine to process each included Taskfile
 		g.Go(func() error {
 			cache := &templater.Cache{Vars: vars}
