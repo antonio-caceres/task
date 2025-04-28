@@ -7,8 +7,9 @@ type (
 	// designed to be embedded in other node types so that this boilerplate code
 	// does not need to be repeated.
 	BaseNode struct {
-		parent Node
-		dir    string
+		parent   Node
+		dir      string
+		checksum string
 	}
 )
 
@@ -32,10 +33,24 @@ func WithParent(parent Node) NodeOption {
 	}
 }
 
+func WithChecksum(checksum string) NodeOption {
+	return func(node *BaseNode) {
+		node.checksum = checksum
+	}
+}
+
 func (node *BaseNode) Parent() Node {
 	return node.parent
 }
 
 func (node *BaseNode) Dir() string {
 	return node.dir
+}
+
+func (node *BaseNode) Checksum() string {
+	return node.checksum
+}
+
+func (node *BaseNode) Verify(checksum string) bool {
+	return node.checksum == "" || node.checksum == checksum
 }
